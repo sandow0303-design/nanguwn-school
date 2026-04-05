@@ -86,4 +86,59 @@
             
             <div class="p-4 border-t border-slate-700 bg-slate-800/50 flex justify-between items-center">
                 <div class="text-xs text-slate-500 flex items-center gap-2">
-                    💡 建議：複製後，貼到您
+                    💡 建議：複製後，貼到您慣用的 AI 中執行。
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeModal()" class="px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 transition text-sm">取消</button>
+                    <button onclick="copyFromModal()" class="px-4 py-2 rounded-lg bg-accent-cyan hover:bg-cyan-400 text-white font-bold transition flex items-center gap-2 text-sm shadow-lg shadow-cyan-500/20">
+                        <span>📋</span> 複製提示詞
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded shadow-lg transform transition-transform duration-300 translate-y-20 opacity-0 z-50">
+        提示詞已複製到剪貼簿！
+    </div>
+
+    <script>
+        const modal = document.getElementById('promptModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalTextarea = document.getElementById('modalTextarea');
+
+        // 打開彈窗並載入資料
+        function openModal(title, text) {
+            modalTitle.innerHTML = `<span class="text-accent-blue">✍️</span> ${title}`;
+            modalTextarea.value = text;
+            modal.classList.remove('hidden'); // 移除隱藏狀態
+        }
+
+        // 關閉彈窗
+        function closeModal() {
+            modal.classList.add('hidden'); // 加入隱藏狀態
+        }
+
+        // 從彈窗中複製修改後的文字
+        function copyFromModal() {
+            const currentText = modalTextarea.value;
+            
+            navigator.clipboard.writeText(currentText).then(() => {
+                closeModal(); // 複製成功後關閉彈窗
+                
+                // 顯示成功提示
+                const toast = document.getElementById('toast');
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }).catch(err => {
+                console.error('複製失敗:', err);
+                alert('複製失敗，請檢查瀏覽器權限。');
+            });
+        }
+    </script>
+</body>
+</html>
