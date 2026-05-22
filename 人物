@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12維度 AI 人物設定 Prompt 生成器</title>
+    <!-- 導入 Tailwind CSS 提升視覺質感 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 自訂滾動條樣式，保持極簡清明感 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- 頂部導航欄 -->
+    <header class="bg-white border-b border-slate-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 tracking-wide">AI 人物設定提示詞產生器</h1>
+                <p class="text-xs text-slate-500 mt-0.5">專注於年輕女性主體的 12 維度矩陣控制台</p>
+            </div>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-mono border border-slate-200">v1.0.0</span>
+        </div>
+    </header>
+
+    <!-- 主內容區 -->
+    <main class="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- 左側與中間：12維度選項配置區 (佔據 2 欄) -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- 分組 1：主體核心特徵 -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+                <h2 class="text-sm font-bold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-3 bg-indigo-600 rounded-full"></span> 1. 主體核心特徵
+                </h2>
+                <div class="space-y-4" id="group-core"></div>
+            </div>
+
+            <!-- 分組 2：外在造型與姿態 -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+                <h2 class="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-3 bg-emerald-600 rounded-full"></span> 2. 外在造型與姿態
+                </h2>
+                <div class="space-y-4" id="group-styling"></div>
+            </div>
+
+            <!-- 分組 3：時空環境與光影 -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+                <h2 class="text-sm font-bold text-amber-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-3 bg-amber-600 rounded-full"></span> 3. 時空環境與光影
+                </h2>
+                <div class="space-y-4" id="group-env"></div>
+            </div>
+
+            <!-- 分組 4：藝術風格與鏡頭 -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+                <h2 class="text-sm font-bold text-rose-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-3 bg-rose-600 rounded-full"></span> 4. 藝術風格與鏡頭
+                </h2>
+                <div class="space-y-4" id="group-camera"></div>
+            </div>
+
+        </div>
+
+        <!-- 右側：即時 Prompt 輸出固定面板 (佔據 1 欄) -->
+        <div class="lg:col-span-1">
+            <div class="bg-slate-900 text-slate-100 rounded-xl p-5 shadow-lg sticky top-24 border border-slate-800">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm text-slate-400 tracking-wider uppercase">Master Prompt 輸出</h3>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">Live Update</span>
+                </div>
+                
+                <!-- Prompt 顯示框 -->
+                <div class="relative bg-slate-950 rounded-lg p-4 border border-slate-800 min-h-[250px] max-h-[400px] overflow-y-auto">
+                    <p id="prompt-output" class="text-sm font-mono leading-relaxed text-slate-200 selection:bg-indigo-500/30"></p>
+                </div>
+
+                <!-- 複製按鈕 -->
+                <button id="copy-btn" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm shadow-md shadow-indigo-600/10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                    一鍵複製 Prompt
+                </button>
+                
+                <p class="text-[11px] text-slate-500 mt-3 text-center">提示：本提示詞架構已針對 Midjourney v6 與 Stable Diffusion XL 優化。</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript 核心控制邏輯 -->
+    <script>
+        // 12 維度資料模型配置
+        const dimensions = [
+            // 1. 主體核心特徵
+            { id: 'theme', name: '角色主題', group: 'core', options: [
+                { label: '賽博龐克', prompt: 'Cyberpunk cyber-hunter theme' },
+                { label: '魔幻精靈', prompt: 'Ethereal fantasy elf princess theme' },
+                { label: '都會時尚', prompt: 'Modern urban fashion editorial theme' },
+                { label: '古典國風', prompt: 'Traditional Chinese hanfu aesthetic theme' },
+                { label: '末日廢土', prompt: 'Post-apocalyptic wasteland survivor theme' }
+            ]},
+            { id: 'age', name: '年齡/性別', group: 'core', options: [
+                { label: '19歲少女', prompt: 'A 19-year-old young woman' },
+                { label: '24歲輕熟', prompt: 'A 24-year-old sophisticated young woman' },
+                { label: '28歲御姐', prompt: 'A 28-year-old elegant woman' }
+            ]},
+            { id: 'features', name: '外貌特徵', group: 'core', options: [
+                { label: '東亞精緻', prompt: 'East Asian features, flawless porcelain skin, almond-shaped eyes' },
+                { label: '深邃混血', prompt: 'Eurasian mixed race, defined jawline, deep-set emerald eyes' },
+                { label: '西方古典', prompt: 'Caucasian features, high cheekbones, striking blue eyes, subtle freckles' }
+            ]},
+            { id: 'hair', name: '髮型/髮色', group: 'core', options: [
+                { label: '深栗大捲', prompt: 'long voluminous wavy chestnut brown hair' },
+                { label: '姬髮黑直', prompt: 'glossy straight black hair, hime cut with air bangs' },
+                { label: '銀白精靈', prompt: 'textured silver white pixie cut' },
+                { label: '粉色波浪', prompt: 'soft pastel pink wavy hair blowing in the wind' }
+            ]},
+            // 2. 外在造型與姿態
+            { id: 'clothing', name: '服裝風格', group: 'styling', options: [
+                { label: '高級晚禮服', prompt: 'wearing an intricate silk evening gown with velvet details' },
+                { label: '機能工裝', prompt: 'wearing a futuristic black techwear jacket with straps and tactical gears' },
+                { label: '寬鬆白襯衫', prompt: 'wearing an oversized white button-down linen shirt' },
+                { label: '改良式漢服', prompt: 'wearing modern conceptualized traditional Chinese Hanfu robe' }
+            ]},
+            { id: 'expression', name: '表情/情緒', group: 'styling', options: [
+                { label: '清冷孤傲', prompt: 'neutral expression, distant aloof gaze, looking directly into camera' },
+                { label: '溫柔微醺', prompt: 'gentle subtle smile, dreamy and soft eyes' },
+                { label: '神祕魅惑', prompt: 'enigmatic smirk, alluring seductive gaze, slightly raised eyebrow' }
+            ]},
+            { id: 'pose', name: '姿勢/動作', group: 'styling', options: [
+                { label: '驀然回首', prompt: 'looking back over her shoulder' },
+                { label: '單手托腮', prompt: 'leaning slightly with hand gently supporting her chin' },
+                { label: '動態漫步', prompt: 'captured mid-action walking gracefully' }
+            ]},
+            // 3. 時空環境與光影
+            { id: 'scene', name: '場景環境', group: 'env', options: [
+                { label: '雨夜東京', prompt: 'on a rainy cyberpunk Tokyo street with neon signs reflecting in puddles' },
+                { label: '迷霧森林', prompt: 'in a mysterious misty pine forest with morning dew' },
+                { label: '黑膠唱片店', prompt: 'inside a cozy vintage record store surrounded by vinyls' },
+                { label: '極簡畫廊', prompt: 'standing in a minimalist industrial concrete art gallery' }
+            ]},
+            { id: 'light', name: '光線調性', group: 'env', options: [
+                { label: '電影感輪廓光', prompt: 'strong cinematic rim lighting, dramatic backlighting highlighting hair strands' },
+                { label: '倫勃朗明暗', prompt: 'chiaroscuro style, Rembrandt lighting with deep moody shadows' },
+                { label: '黃金時刻逆光', prompt: 'golden hour warm sunlight, soft god rays, beautiful Tyndall effect' },
+                { label: '雙色霓虹', prompt: 'vibrant cyan and magenta dual neon ambient lighting' }
+            ]},
+            // 4. 藝術風格與鏡頭
+            { id: 'style', name: '藝術風格', group: 'camera', options: [
+                { label: '時尚寫實攝影', prompt: 'fashion editorial photography style' },
+                { label: '新日系動漫', prompt: 'modern anime aesthetic, vibrant transparent lighting' },
+                { label: '概念厚塗插畫', prompt: 'digital concept art, masterful painting stroke textures, inspired by WLOP' }
+            ]},
+            { id: 'lens', name: '鏡頭語言', group: 'camera', options: [
+                { label: '人像特寫(85mm)', prompt: 'close-up portrait shot, shot on 85mm lens, f/1.2 aperture, shallow depth of field, beautifully blurred background' },
+                { label: '中景半身(50mm)', prompt: 'medium shot, upper body framing, shot on 50mm cinematic camera' },
+                { label: '廣角全身(35mm)', prompt: 'full body shot, wide angle lens dynamic perspective, capturing full environment' }
+            ]},
+            { id: 'quality', name: '畫質與細節', group: 'camera', options: [
+                { label: '極致細節(預設)', prompt: 'photorealistic skin texture, micro pores visible, reflection in pupils, 8k resolution, intricate details, hyper-detailed clothing fabric textures' },
+                { label: '35mm底片質感', prompt: '35mm film grain texture, analog film aesthetic, rich tones, organic look, shot on Fujifilm Superia' }
+            ]}
+        ];
+
+        // 紀錄當前各個維度被選中的索引值（預設全部選第一個選項）
+        const currentSelections = {};
+        dimensions.forEach(d => {
+            currentSelections[d.id] = 0;
+        });
+
+        // 動態初始化與建立前端介面 DOM
+        function initInterface() {
+            dimensions.forEach(dim => {
+                const groupContainer = document.getElementById(`group-${dim.group}`);
+                if (!groupContainer) return;
+
+                // 建立該維度的整行外殼
+                const dimRow = document.createElement('div');
+                dimRow.className = 'border-b border-slate-100 pb-3 last:border-b-0 last:pb-0';
+
+                // 維度名稱標題
+                const label = document.createElement('h3');
+                label.className = 'text-xs font-semibold text-slate-500 mb-2';
+                label.innerText = dim.name;
+                dimRow.appendChild(label);
+
+                // 選項容器 (Flex 排版標籤)
+                const chipsWrapper = document.createElement('div');
+                chipsWrapper.className = 'flex flex-wrap gap-2';
+
+                // 產生每個按鈕 (Chip)
+                dim.options.forEach((opt, index) => {
+                    const chip = document.createElement('button');
+                    chip.id = `chip-${dim.id}-${index}`;
+                    chip.innerText = opt.label;
+                    
+                    // 點擊事件
+                    chip.onclick = () => selectOption(dim.id, index);
+                    chipsWrapper.appendChild(chip);
+                });
+
+                dimRow.appendChild(chipsWrapper);
+                groupContainer.appendChild(dimRow);
+            });
+            
+            // 首次重新整理樣式與 Prompt
+            updateDOM();
+        }
+
+        // 處理選擇邏輯
+        function selectOption(dimId, index) {
+            currentSelections[dimId] = index;
+            updateDOM();
+        }
+
+        // 更新按鈕的高亮狀態並重新編譯 Prompt
+        function updateDOM() {
+            dimensions.forEach(dim => {
+                dim.options.forEach((_, index) => {
+                    const chip = document.getElementById(`chip-${dim.id}-${index}`);
+                    if (!chip) return;
+
+                    const isActive = currentSelections[dim.id] === index;
+                    if (isActive) {
+                        // 激活狀態樣式
+                        chip.className = 'text-xs bg-slate-900 text-white font-medium px-3 py-1.5 rounded-lg border border-slate-950 transition-all duration-150 shadow-sm scale-[1.02]';
+                    } else {
+                        // 未激活狀態樣式
+                        chip.className = 'text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-200 transition-all duration-150';
+                    }
+                });
+            });
+
+            // 重新拼接並呈現 Prompt
+            document.getElementById('prompt-output').innerText = generatePromptText();
+        }
+
+        // 將 12 個維度的內容，依照最符合 AI 空間理解的因果序拼接成字串
+        function generatePromptText() {
+            const sels = currentSelections;
+            
+            // 建立提取助手
+            const getPrompt = (id) => dimensions.find(d => d.id === id).options[sels[id]].prompt;
+
+            // 結構化語法因果拼接結構：
+            // [藝術風格], [主題], [主體年齡性別] with [外貌特徵], [髮型髮色], [服裝風格]. [表情], [姿勢動作]. [場景環境], [光線調性]. [鏡頭語言], [畫質細節]
+            const promptPieces = [
+                getPrompt('style'),
+                getPrompt('theme'),
+                `${getPrompt('age')} with ${getPrompt('features')}`,
+                getPrompt('hair'),
+                getPrompt('clothing'),
+                `${getPrompt('expression')}, ${getPrompt('pose')}`,
+                getPrompt('scene'),
+                getPrompt('light'),
+                getPrompt('lens'),
+                getPrompt('quality')
+            ];
+
+            // 過濾並以逗號加空格連接
+            return promptPieces.filter(p => p && p.trim() !== '').join(', ') + '.';
+        }
+
+        // 一鍵複製功能實作
+        document.getElementById('copy-btn').onclick = function() {
+            const textToCopy = document.getElementById('prompt-output').innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const origText = this.innerHTML;
+                this.innerHTML = `
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span class="text-emerald-400">已成功複製到剪貼簿！</span>
+                `;
+                this.classList.remove('bg-indigo-600');
+                this.classList.add('bg-slate-800');
+                
+                setTimeout(() => {
+                    this.innerHTML = origText;
+                    this.classList.remove('bg-slate-800');
+                    this.classList.add('bg-indigo-600');
+                }, 2000);
+            }).catch(err => {
+                console.error('無法複製文字: ', err);
+                alert('複製失敗，請手動全選右側文字進行複製。');
+            });
+        };
+
+        // 頁面載入完成後啟動
+        window.onload = initInterface;
+    </script>
+</body>
+</html>
